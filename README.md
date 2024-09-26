@@ -12,11 +12,10 @@ A full-stack blog application built with **NestJS** for the backend, **PostgreSQ
 ## Installation
 
 1. Clone the repository:
-   git clone https://github.com/your-username/blog-app.git
-   cd blog-app-backend
-Install dependencies:
+  git clone https://github.com/ahmad5373/Blog-App-Backend-NestJS
+  cd blog-app-backend
 
-
+## Install dependencies:
 npm install
 Create a .env file in the root of the project and configure your environment variables:
 
@@ -26,7 +25,11 @@ DATABASE_PORT=5432
 DATABASE_USER=your_database_user
 DATABASE_PASSWORD=your_database_password
 DATABASE_NAME=your_database_name
+
+
+DATABASE_URL=postgresql://${{DATABASE_USER}}:${{DATABASE_PASSWORD}}@${{DATABASE_HOST}}:5432/${{DATABASE_NAME}}
 JWT_SECRET=your_jwt_secret
+
 Run database migrations:
 
 
