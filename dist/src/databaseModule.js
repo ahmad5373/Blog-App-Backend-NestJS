@@ -22,13 +22,12 @@ exports.DatabaseModule = DatabaseModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: process.env.DB_HOST,
-                port: 5432,
-                username: process.env.DB_USER,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_NAME,
+                url: process.env.DATABASE_URL,
                 entities: [user_entity_1.User, post_entity_1.Post, comment_entity_1.Comment],
                 synchronize: true,
+                ssl: {
+                    rejectUnauthorized: false,
+                },
             }),
         ],
     })
