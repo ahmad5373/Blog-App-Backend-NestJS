@@ -14,13 +14,18 @@ const post_service_1 = require("./post.service");
 const post_controller_1 = require("./post.controller");
 const jwt_1 = require("@nestjs/jwt");
 const user_module_1 = require("../user/user.module");
+const comment_module_1 = require("../comment/comment.module");
 let PostModule = class PostModule {
 };
 exports.PostModule = PostModule;
 exports.PostModule = PostModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([post_entity_1.Post]),
-            jwt_1.JwtModule, user_module_1.UserModule,],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([post_entity_1.Post]),
+            (0, common_1.forwardRef)(() => comment_module_1.CommentModule),
+            jwt_1.JwtModule,
+            user_module_1.UserModule
+        ],
         controllers: [post_controller_1.PostsController],
         providers: [post_service_1.PostsService],
         exports: [post_service_1.PostsService],

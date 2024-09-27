@@ -22,8 +22,8 @@ let CommentController = class CommentController {
     }
     create(comment, req) {
         const commentData = { post: comment.postId, content: comment.content };
-        const user = req.user.id;
-        return this.commentService.create({ ...commentData, user });
+        const author = req.user.id;
+        return this.commentService.create({ ...commentData, author });
     }
     findAll() {
         return this.commentService.findAll();

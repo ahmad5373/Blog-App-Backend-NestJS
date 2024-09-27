@@ -19,7 +19,11 @@ let CommentModule = class CommentModule {
 exports.CommentModule = CommentModule;
 exports.CommentModule = CommentModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([comment_entity_1.Comment]), jwt_1.JwtModule, post_module_1.PostModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([comment_entity_1.Comment]),
+            jwt_1.JwtModule,
+            (0, common_1.forwardRef)(() => post_module_1.PostModule),
+        ],
         controllers: [comment_controller_1.CommentController],
         providers: [comment_service_1.CommentService],
         exports: [comment_service_1.CommentService],

@@ -18,14 +18,16 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const post_entity_1 = require("./entities/post.entity");
 const user_service_1 = require("../user/user.service");
+const comment_service_1 = require("../comment/comment.service");
 let PostsService = class PostsService {
-    constructor(postRepository, userRepository) {
+    constructor(postRepository, commentService, userService) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.commentService = commentService;
+        this.userService = userService;
     }
     async create(postData) {
         try {
-            const user = await this.userRepository.findOne(postData.id);
+            const user = await this.userService.findOne(postData.id);
             if (!user) {
                 throw new common_1.NotFoundException('User not found');
             }
@@ -67,9 +69,12 @@ let PostsService = class PostsService {
         }
     }
     async delete(id) {
-        const post = await this.postRepository.findOne({ where: { id: id } });
+        const post = await this.postRepository.findOne({ where: { id: id }, relations: ['comments'] });
         if (!post) {
             throw new common_1.NotFoundException('Post found');
+        }
+        if (post.comments.length > 0) {
+            await this.commentService.deleteAll(id);
         }
         await this.postRepository.delete(id);
         return { message: 'Post deleted successfully' };
@@ -79,7 +84,9 @@ exports.PostsService = PostsService;
 exports.PostsService = PostsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(post_entity_1.Post)),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => comment_service_1.CommentService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        comment_service_1.CommentService,
         user_service_1.UserService])
 ], PostsService);
 //# sourceMappingURL=post.service.js.map

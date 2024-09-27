@@ -10,8 +10,8 @@ export class CommentController {
   @Post('create')
   create(@Body() comment, @Request() req) {
     const commentData = { post: comment.postId, content: comment.content }
-    const user = req.user.id;
-    return this.commentService.create({ ...commentData, user });
+    const author = req.user.id;
+    return this.commentService.create({ ...commentData, author });
   }
 
   @Get()

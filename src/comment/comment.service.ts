@@ -1,4 +1,4 @@
-import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
@@ -9,12 +9,13 @@ export class CommentService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    private readonly postRepository: PostsService,
+    @Inject(forwardRef(() => PostsService))
+    private readonly postsService: PostsService,
   ) { }
 
   async create(comment: any): Promise<Comment> {
     try {
-      const post = await this.postRepository.findOne(comment.post);
+      const post = await this.postsService.findOne(comment.post);
       if (!post) {
         throw new NotFoundException('Post not found');
       }
@@ -30,11 +31,11 @@ export class CommentService {
   findAll(): Promise<Comment[]> {
     return this.commentRepository.find({ relations: ['post', 'author'] });
   }
-  
+
   findPostAllComments(postId: number): Promise<Comment[]> {
     return this.commentRepository.find({
       where: { post: { id: postId } },
-      relations: ['post', 'author'], 
+      relations: ['post', 'author'],
     });
   }
 
@@ -62,6 +63,10 @@ export class CommentService {
     }
     await this.commentRepository.delete(id);
     return { message: 'comment deleted successfully' };
+  }
+
+  async deleteAll(id: number) {
+    await this.commentRepository.delete({ post: { id } });
   }
 
 }

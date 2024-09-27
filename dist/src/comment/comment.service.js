@@ -19,13 +19,13 @@ const typeorm_2 = require("typeorm");
 const comment_entity_1 = require("./entities/comment.entity");
 const post_service_1 = require("../post/post.service");
 let CommentService = class CommentService {
-    constructor(commentRepository, postRepository) {
+    constructor(commentRepository, postsService) {
         this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
+        this.postsService = postsService;
     }
     async create(comment) {
         try {
-            const post = await this.postRepository.findOne(comment.post);
+            const post = await this.postsService.findOne(comment.post);
             if (!post) {
                 throw new common_1.NotFoundException('Post not found');
             }
@@ -70,11 +70,15 @@ let CommentService = class CommentService {
         await this.commentRepository.delete(id);
         return { message: 'comment deleted successfully' };
     }
+    async deleteAll(id) {
+        await this.commentRepository.delete({ post: { id } });
+    }
 };
 exports.CommentService = CommentService;
 exports.CommentService = CommentService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(comment_entity_1.Comment)),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => post_service_1.PostsService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         post_service_1.PostsService])
 ], CommentService);

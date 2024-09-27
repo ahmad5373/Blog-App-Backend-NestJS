@@ -1,20 +1,23 @@
-import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { UserService } from 'src/user/user.service';
+import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
-    private postRepository: Repository<Post>,
-    private userRepository: UserService,
+    private readonly postRepository: Repository<Post>,
+    @Inject(forwardRef(() => CommentService))
+    private readonly commentService: CommentService,
+    private userService: UserService,
   ) { }
 
   async create(postData: any) {
     try {
-      const user = await this.userRepository.findOne(postData.id);
+      const user = await this.userService.findOne(postData.id);
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -58,9 +61,12 @@ export class PostsService {
   }
 
   async delete(id: number) {
-    const post = await this.postRepository.findOne({ where: { id: id } });
+    const post = await this.postRepository.findOne({ where: { id: id }, relations: ['comments']  });
     if (!post) {
       throw new NotFoundException('Post found');
+    }
+    if (post.comments.length > 0) {
+      await this.commentService.deleteAll(id);
     }
     await this.postRepository.delete(id);
     return { message: 'Post deleted successfully' };

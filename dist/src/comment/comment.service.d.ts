@@ -3,8 +3,8 @@ import { Comment } from './entities/comment.entity';
 import { PostsService } from 'src/post/post.service';
 export declare class CommentService {
     private readonly commentRepository;
-    private readonly postRepository;
-    constructor(commentRepository: Repository<Comment>, postRepository: PostsService);
+    private readonly postsService;
+    constructor(commentRepository: Repository<Comment>, postsService: PostsService);
     create(comment: any): Promise<Comment>;
     findAll(): Promise<Comment[]>;
     findPostAllComments(postId: number): Promise<Comment[]>;
@@ -16,4 +16,5 @@ export declare class CommentService {
     remove(id: number): Promise<{
         message: string;
     }>;
+    deleteAll(id: number): Promise<void>;
 }
