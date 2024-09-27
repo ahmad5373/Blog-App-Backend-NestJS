@@ -14,6 +14,7 @@ const post_entity_1 = require("./post/entities/post.entity");
 const comment_entity_1 = require("./comment/entities/comment.entity");
 const dotenv = require("dotenv");
 dotenv.config();
+const LOCAL_DATABASE_URL = `postgresql://${process.env.PGUSER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.PGDATABASE}?sslmode=disable`;
 let DatabaseModule = class DatabaseModule {
 };
 exports.DatabaseModule = DatabaseModule;
@@ -22,7 +23,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                url: process.env.DATABASE_URL,
+                url: process.env.NODE_ENV === 'production' ? process.env.DATABASE_URL : LOCAL_DATABASE_URL,
                 entities: [user_entity_1.User, post_entity_1.Post, comment_entity_1.Comment],
                 synchronize: true,
                 ssl: {

@@ -5,14 +5,14 @@ import { Post } from './post/entities/post.entity';
 import { Comment } from './comment/entities/comment.entity';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
+const LOCAL_DATABASE_URL = `postgresql://${process.env.PGUSER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.PGDATABASE}?sslmode=disable`
 @Module({
     imports: [
         TypeOrmModule.forRoot({
             type: 'postgres',
-            url: process.env.DATABASE_URL,  
+            url: process.env.NODE_ENV === 'production' ? process.env.DATABASE_URL : LOCAL_DATABASE_URL ,
             entities: [User, Post, Comment],
-            synchronize: true, 
+            synchronize: true,
             ssl: {
                 rejectUnauthorized: false,
             },
